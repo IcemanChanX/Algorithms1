@@ -1,3 +1,3 @@
 Algorithms1
 ===========
-Variety of algorithms implemented in Node.js.  
+Variety of algorithms and datastructures implemented in Node.js.  
