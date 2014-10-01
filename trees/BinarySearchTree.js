@@ -27,7 +27,9 @@ function BinarySearchTree() {
 			root = newNode;
 			return;
 		}else {
-			if(newNode.value < currentNode.value) {
+			if(newNode.value == currentNode.value) {
+				throw new Error('Duplicate Insert');
+			}else if(newNode.value < currentNode.value) {
 				if(currentNode.left == null) {
 					currentNode.left = newNode;
 					return;
@@ -102,25 +104,44 @@ function BinarySearchTree() {
 		}
 	}
 	var printNode = function(node) {
-		console.log(node.value);
+		//console.log(node.value);
+		process.stdout.write(node.value + " ");
 	}
 
 	var remove = function(node, value, parent) {
+		//Replace value node with largest Node in left Subtree
+		//Or Replace value node with smallest node in right subtree
+		//TODO- Need to fix this
 		if(node == null) {
-			return;
+			throw new Error('Value Not Found');
 		} else {
 			if(node.value == value) {
 				if(node.left != null && node.right != null) {	//Two children
-					//Replace with largest value in left subtree
 					var maxLeft = max(node.left);
 					node.value = maxLeft;
 					remove(node.left, maxLeft, node);
 				} else if(node.left != null) {					//Only left child
-					node = node.left;
-					node.left = null;
+					var maxLeft = max(node.left);
+					node.value = maxLeft;
+					remove(node.left, maxLeft, node);
+					if(parent!=null) {
+						if(parent.value > node.value) {
+							parent.left = node.left;
+						} else {
+							parent.right = node.left;
+						}
+					}
 				}else if (node.right != null){					//Only right child
-					node = node.right;
-					node.right = null;
+					var minRight = min(node.right);
+					node.value = minRight;
+					remove(node.right, minRight, node);
+					if(parent != null) {
+						if(parent.value > node.value) {
+							parent.left = node.right;
+						} else {
+							parent.right = node.right;
+						}
+					}
 				} else {										//No Children
 					if(root == node) {
 						root = null;
@@ -153,11 +174,16 @@ function BinarySearchTree() {
 	this.contains = function(value) {
 		return contains(root, value);
 	}
+	
 	this.getMax = function() {
 		return max(root);
 	}
 	this.getSize = function() {
 		return size(root); 
+	}
+	this.getRoot = function() {
+		return (root == null ? null : root.value);
+		
 	}
 	this.insert = function(value) {
 		var n = new TreeNode();
@@ -177,6 +203,8 @@ function BinarySearchTree() {
 	this.remove = function(value) {
 		remove(root, value, null);
 	}
+
+
 }
 
 module.exports = BinarySearchTree
